@@ -12,6 +12,8 @@ import {
   AreaChart,
   Area,
 } from 'recharts';
+import CalendarHeatmap from 'react-calendar-heatmap';
+import 'react-calendar-heatmap/dist/styles.css';
 import {
   Github,
   Star,
@@ -21,14 +23,16 @@ import {
   TrendingUp,
   Users,
   Activity,
+  Award,
 } from 'lucide-react';
-import html2canvas from 'html2canvas-pro';
+import html2canvas from 'html2canvas';
 
 const GitHubYearWrap = () => {
   const [username, setUsername] = useState('');
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState<any>(null);
   const [error, setError] = useState('');
+  const [viewMode, setViewMode] = useState<'wave' | 'calendar'>('wave');
   const cardRef = useRef<HTMLDivElement | null>(null);
 
   const COLORS = [
@@ -120,7 +124,7 @@ const GitHubYearWrap = () => {
         {/* Header */}
         <div className="bg-yellow-300 border-4 border-black p-8 mb-8 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
           <h1 className="text-5xl md:text-7xl font-black mb-4 uppercase tracking-tight">
-            GitHub Wrap
+            GitHub Wrap 2025
           </h1>
           <p className="text-xl font-bold">Your year in code, visualized.</p>
         </div>
@@ -194,6 +198,26 @@ const GitHubYearWrap = () => {
                 </div>
               </div>
 
+              {/* Badges Section */}
+              <div className="bg-linear-to-r from-purple-400 to-pink-400 border-4 border-black p-8 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]">
+                <div className="flex items-center gap-3 mb-4">
+                  <Award className="w-8 h-8" />
+                  <h3 className="text-3xl font-black uppercase">
+                    Developer Badges
+                  </h3>
+                </div>
+                <div className="space-y-4">
+                  {data.badges.map((badge: string, index: number) => (
+                    <div
+                      key={index}
+                      className="bg-white border-4 border-black p-4 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"
+                    >
+                      <p className="text-lg font-black">{badge}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
               {/* Stats Grid */}
               <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
                 {[
@@ -247,15 +271,27 @@ const GitHubYearWrap = () => {
                   },
                   {
                     icon: Calendar,
-                    label: 'Most Active Day',
-                    value: data.mostActiveDay,
+                    label: 'Peak Day',
+                    value: `${data.mostActiveDay} (${data.peakCommitsInDay})`,
                     color: 'bg-indigo-400',
                   },
                   {
                     icon: Calendar,
-                    label: 'Most Active Month',
+                    label: 'Peak Week',
+                    value: data.mostActiveWeek,
+                    color: 'bg-teal-400',
+                  },
+                  {
+                    icon: Calendar,
+                    label: 'Peak Month',
                     value: data.mostActiveMonth,
                     color: 'bg-rose-400',
+                  },
+                  {
+                    icon: Calendar,
+                    label: 'Most Active On',
+                    value: `${data.mostActiveDayOfWeek}s`,
+                    color: 'bg-lime-400',
                   },
                 ].map((stat, i) => (
                   <div
@@ -263,7 +299,7 @@ const GitHubYearWrap = () => {
                     className={`${stat.color} border-4 border-black p-6 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] transition-all`}
                   >
                     <stat.icon className="w-10 h-10 mb-3" />
-                    <div className="text-4xl font-black mb-2">
+                    <div className="text-3xl font-black mb-2">
                       {formatStatValue(stat.value)}
                     </div>
                     <div className="text-sm font-bold uppercase">
@@ -273,47 +309,97 @@ const GitHubYearWrap = () => {
                 ))}
               </div>
 
-              {/* Monthly Activity - Area Wave */}
+              {/* Weekly Activity Toggle */}
               <div className="bg-pink-300 border-4 border-black p-8 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]">
-                <h3 className="text-3xl font-black mb-6 uppercase">
-                  Commit Timeline 2025
-                </h3>
-                <ResponsiveContainer width="100%" height={400}>
-                  <AreaChart data={data.commits}>
-                    <CartesianGrid strokeWidth={3} stroke="#000" />
-                    <XAxis
-                      dataKey="month"
-                      stroke="#000"
-                      strokeWidth={2}
-                      style={{ fontWeight: 'bold' }}
-                    />
-                    <YAxis
-                      stroke="#000"
-                      strokeWidth={2}
-                      style={{ fontWeight: 'bold' }}
-                    />
-                    <Tooltip
-                      contentStyle={{
-                        border: '4px solid black',
-                        fontWeight: 'bold',
+                <div className="flex justify-between items-center mb-6">
+                  <h3 className="text-3xl font-black uppercase">
+                    Weekly Activity 2025
+                  </h3>
+                  <div className="flex gap-2">
+                    <button
+                      onClick={() => setViewMode('wave')}
+                      className={`px-4 py-2 font-black border-4 border-black transition-all ${
+                        viewMode === 'wave'
+                          ? 'bg-black text-white'
+                          : 'bg-white hover:bg-gray-100'
+                      }`}
+                    >
+                      WAVE
+                    </button>
+                    <button
+                      onClick={() => setViewMode('calendar')}
+                      className={`px-4 py-2 font-black border-4 border-black transition-all ${
+                        viewMode === 'calendar'
+                          ? 'bg-black text-white'
+                          : 'bg-white hover:bg-gray-100'
+                      }`}
+                    >
+                      CALENDAR
+                    </button>
+                  </div>
+                </div>
+
+                {viewMode === 'wave' ? (
+                  <ResponsiveContainer width="100%" height={400}>
+                    <AreaChart data={data.weeklyCommits}>
+                      <CartesianGrid strokeWidth={3} stroke="#000" />
+                      <XAxis
+                        dataKey="week"
+                        stroke="#000"
+                        strokeWidth={2}
+                        style={{ fontWeight: 'bold' }}
+                        interval={3}
+                      />
+                      <YAxis
+                        stroke="#000"
+                        strokeWidth={2}
+                        style={{ fontWeight: 'bold' }}
+                      />
+                      <Tooltip
+                        contentStyle={{
+                          border: '2px solid black',
+                          fontWeight: 'bold',
+                        }}
+                      />
+                      <Area
+                        type="monotone"
+                        dataKey="commits"
+                        stroke="#000"
+                        strokeWidth={3}
+                        fill="#FF6B35"
+                        fillOpacity={0.5}
+                        activeDot={{
+                          r: 6,
+                          fill: '#000',
+                          stroke: '#000',
+                          strokeWidth: 2,
+                        }}
+                      />
+                    </AreaChart>
+                  </ResponsiveContainer>
+                ) : (
+                  <div className="p-4 border-4 border-black">
+                    <CalendarHeatmap
+                      startDate={new Date('2025-01-01')}
+                      endDate={new Date('2025-12-31')}
+                      values={data.dailyCommits}
+                      classForValue={(value) => {
+                        if (!value || value.count === 0) {
+                          return 'color-empty';
+                        }
+                        if (value.count < 3) return 'color-scale-1';
+                        if (value.count < 6) return 'color-scale-2';
+                        if (value.count < 10) return 'color-scale-3';
+                        return 'color-scale-4';
+                      }}
+                      tooltipDataAttrs={(value: any) => {
+                        return {
+                          'data-tip': `${value.date}: ${value.count || 0} commits`,
+                        };
                       }}
                     />
-                    <Area
-                      type="monotone"
-                      dataKey="commits"
-                      stroke="#000"
-                      strokeWidth={3}
-                      fill="#FF6B35"
-                      fillOpacity={0.5}
-                      activeDot={{
-                        r: 6,
-                        fill: '#000',
-                        stroke: '#000',
-                        strokeWidth: 2,
-                      }}
-                    />
-                  </AreaChart>
-                </ResponsiveContainer>
+                  </div>
+                )}
               </div>
 
               {/* Language Pie */}
@@ -385,4 +471,3 @@ const GitHubYearWrap = () => {
 };
 
 export default GitHubYearWrap;
- 
