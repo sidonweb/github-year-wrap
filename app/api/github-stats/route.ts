@@ -43,7 +43,7 @@ function calculateBadges(stats: any): string[] {
   if (languages.length > 0) {
     const topLang = languages[0].name;
     const langBadges: Record<string, string> = {
-      'TypeScript': '🧙 TypeScript Mage - Wielder of TypeScript sorcery',
+      'TypeScript': '🧙 TypeScript Wizard - Master of typed magic',
       'JavaScript': '⚡ JavaScript Ninja - Master of the dynamic arts',
       'Python': '🐍 Python Charmer - Serpent code whisperer',
       'Java': '☕ Java Architect - Builder of enterprise empires',
@@ -105,7 +105,7 @@ async function fetchGraphQL(query: string, variables: any, token: string) {
   }
 
   const data = await response.json();
-  
+
   if (data.errors) {
     throw new Error(`GraphQL errors: ${JSON.stringify(data.errors)}`);
   }
@@ -133,9 +133,21 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    const currentYear = new Date().getFullYear();
-    const yearStart = `${currentYear}-01-01T00:00:00Z`;
-    const yearEnd = `${currentYear}-12-31T23:59:59Z`;
+    const now = new Date();
+
+    // End = now (e.g. 2026-01-01Txx)
+    const yearEnd = now.toISOString();
+
+    // Start = same date last year
+    const yearStart = new Date(
+      now.getFullYear() - 1,
+      now.getMonth(),
+      now.getDate(),
+      0, 0, 0
+    ).toISOString();
+
+
+
 
     // Main GraphQL query to get user data and contributions
     const mainQuery = `
@@ -249,7 +261,7 @@ export async function GET(request: NextRequest) {
       week.contributionDays.forEach((day: any) => {
         const count = day.contributionCount;
         const date = day.date;
-        
+
         // Daily commits
         dailyCommits[date] = count;
         weekTotal += count;
@@ -386,12 +398,10 @@ export async function GET(request: NextRequest) {
       badges,
     };
 
-    console.log(`Fetched stats for ${username}:`, stats);
-
     return NextResponse.json(stats);
   } catch (error: any) {
     console.error('Error fetching GitHub data:', error);
-    
+
     if (error.message.includes('Could not resolve to a User')) {
       return NextResponse.json(
         { error: 'User not found' },

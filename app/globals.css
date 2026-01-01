@@ -1,6 +1,16 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 
+::-webkit-scrollbar {
+  width: 0px;
+  background: transparent; /* make scrollbar transparent */
+}
+
+::selection {
+  background-color: #39FF14;
+  color: #000000;
+}
+
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
@@ -126,7 +136,7 @@
 
 /* GitHub Heatmap Colors */
 .react-calendar-heatmap .color-empty {
-  fill: #ebedf0;
+  fill: #ffffff;
 }
 
 .react-calendar-heatmap .color-scale-1 {
@@ -145,6 +155,11 @@
   fill: #216e39;
 }
 
+.react-calendar-heatmap text {
+  fill: #000000 !important; /* Black color */
+  font-size: 10px;
+  text-transform: capitalize;
+}
 /* .react-calendar-heatmap rect {
   stroke: #000;
   stroke-width: 2px;
