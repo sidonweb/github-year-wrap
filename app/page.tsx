@@ -134,11 +134,11 @@ const GitHubYearWrap = () => {
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="bg-yellow-300 border-4 border-black p-8 mb-8 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
-          <h1 className="text-5xl md:text-7xl font-black mb-4 uppercase tracking-tight">
+          <h1 className="text-4xl md:text-7xl font-black mb-4 uppercase tracking-tight">
             GitHub Wrap
           </h1>
           <div className='flex flex-row justify-between items-end md:items-center gap-6 font-black border-black'>
-            <p className="text-xl font-bold">Your year in code, visualized.</p>
+            <p className="text-lg md:text-xl font-bold">Your year in code, visualized.</p>
             <p>
               <a
                 href="https://github.com/sidonweb/github-year-wrap"
@@ -184,14 +184,13 @@ const GitHubYearWrap = () => {
         {data && (
           <div className="space-y-8">
 
-
             {/* Card content for PNG */}
             <div
               ref={cardRef}
               className="bg-white border-4 border-black p-4 md:p-8 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] space-y-8"
             >
               {/* User Info */}
-              <div className="bg-purple-300 border-4 border-black p-8 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]">
+              <div className="bg-purple-300 border-4 border-black p-4 md:p-8 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]">
                 <div className="flex flex-col md:flex-row items-start md:items-center gap-6">
                   <img
                     src={data.user.avatar_url}
@@ -214,9 +213,8 @@ const GitHubYearWrap = () => {
               </div>
 
               {/* Badges Section */}
-              <div className="bg-linear-to-r from-purple-400 to-pink-400 border-4 border-black p-8 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]">
+              <div className="bg-linear-to-r from-purple-400 to-pink-400 border-4 border-black p-4 md:p-8 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]">
                 <div className="flex items-center gap-3 mb-4">
-                  <Trophy className="w-8 h-8" />
                   <h3 className="text-3xl font-black uppercase">
                     Your Badges
                   </h3>
@@ -314,10 +312,10 @@ const GitHubYearWrap = () => {
                     className={`${stat.color} border-4 border-black p-4 md:p-6 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] transition-all`}
                   >
                     <stat.icon className="w-10 h-10 mb-3" />
-                    <div className="text-3xl font-black mb-2">
+                    <div className="text-2xl md:text-3xl font-black mb-2">
                       {formatStatValue(stat.value)}
                     </div>
-                    <div className="text-sm font-bold uppercase">
+                    <div className="text-xs md:text-sm font-bold uppercase">
                       {stat.label}
                     </div>
                   </div>
@@ -325,7 +323,7 @@ const GitHubYearWrap = () => {
               </div>
 
               {/* Language Pie */}
-              <div className="bg-cyan-300 border-4 border-black p-8 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]">
+              <div className="bg-cyan-300 border-4 border-black p-4 md:p-8 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]">
                 <h3 className="text-3xl font-black mb-8 uppercase text-black">
                   Language Breakdown
                 </h3>
@@ -386,7 +384,7 @@ const GitHubYearWrap = () => {
 
               {/* Weekly Activity Toggle */}
               <div className="bg-pink-300 border-4 border-black shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]">
-                <div className="flex flex-col md:flex-row justify-between items-start gap-5 md:items-center mb-6 pt-8 px-8">
+                <div className="flex flex-col md:flex-row justify-between items-start gap-5 md:items-center mb-6 pt-4 md:pt-8 px-4 md:px-8">
                   <h3 className="text-3xl font-black uppercase">
                     Weekly Activity
                   </h3>
@@ -488,8 +486,6 @@ const GitHubYearWrap = () => {
                 languages={data.languages}
                 totalStars={data.totalStars}
               />
-
-
 
             </div>
 
